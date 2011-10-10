@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/sort"
+    	android:title="Sort By" 
+    	android:icon="@drawable/sort" />
+    <item android:id="@+id/hist"
+    	android:title="History" 
+    	android:icon="@drawable/hist" />
+	<item android:id="@+id/search"
+		android:title="Search" 
+    	android:icon="@drawable/search" />
+	<item android:id="@+id/up"
+		android:title="Up" 
+    	android:icon="@drawable/up" />
+    <item android:id="@+id/to_root"
+    	android:title="To Root" 
+    	android:icon="@drawable/root" />
+    <item android:id="@+id/to_sd"
+    	android:title="To SD" 
+    	android:icon="@drawable/root" />
+</menu>

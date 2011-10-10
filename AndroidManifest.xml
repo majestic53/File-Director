@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.majestic.director"
+      android:versionCode="6"
+      android:versionName="2.0.0">
+    <uses-sdk android:minSdkVersion="4" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
+        <activity android:name=".Director"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Search"
+			android:label="Search">
+		</activity>
+        <activity android:name=".History"
+			android:label="History">
+		</activity>
+		<activity android:name=".dialog.Information"
+			android:label="File Information"
+			android:theme="@android:style/Theme.Dialog">
+		</activity>
+		<activity android:name=".dialog.Rename"
+			android:label="Rename File"
+			android:theme="@android:style/Theme.Dialog">
+		</activity>
+		<activity android:name=".dialog.NewFolder"
+			android:label="Create Subfolder"
+			android:theme="@android:style/Theme.Dialog">
+		</activity>
+		<activity android:name=".dialog.Alert"
+			android:label="Alert"
+			android:theme="@android:style/Theme.Dialog">
+		</activity>
+    </application>
+</manifest>

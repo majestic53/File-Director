@@ -1,0 +1,29 @@
+File Director by majestic53 (majestic53@gmail.com)
+
+A simple file manager with all the featured required to manipulate and maintain an android file-system.
+
+Version 2.0.0:
+
+Features:
+
+     Cut/Copy/Paste/Rename/Delete files and directories
+     Create new directories
+     View detailed file information
+     Comprehensive file search
+     Folder history
+
+Known Bugs:
+
+     Folder size only approx.
+     Delete/paste operations may fail to complete if orientation change occurs 
+
+Changelog:
+
+Version 2.0.0
+
+     Updated theme
+     Search/History are now separate activities
+
+Version 1.0.1
+
+     Initial release

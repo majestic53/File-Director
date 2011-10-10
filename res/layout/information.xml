@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffdddddd">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#ffdddddd"
+	    android:padding="10dp">
+	    <ImageView android:id="@+id/file_info_image"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:background="#ffdddddd"
+			android:layout_marginRight="10dp" />
+		<ListView android:id="@+id/file_info_view" 
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:scrollbarAlwaysDrawVerticalTrack="true" 
+			android:smoothScrollbar="true" 
+			android:choiceMode="singleChoice"
+			android:background="#ffdddddd"
+			android:cacheColorHint="#00000000"
+			android:divider="@+drawable/divider"
+			android:dividerHeight="1px"
+			android:focusable="true">
+			<requestFocus />
+		</ListView>
+	</LinearLayout>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#ff888888"
+	    android:paddingTop="5dp">
+		<Button android:id="@+id/file_info_close_button"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="center"
+			android:text="Close" />
+	</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/clear_history"
+    	android:title="Clear History" 
+    	android:icon="@drawable/clear" />
+    <item android:id="@+id/back_history"
+    	android:title="Back" 
+    	android:icon="@drawable/back" />
+</menu>

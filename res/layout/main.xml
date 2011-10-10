@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff888888">
+    <ListView android:id="@+id/file_view" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:scrollbarAlwaysDrawVerticalTrack="true" 
+		android:smoothScrollbar="true" 
+		android:choiceMode="singleChoice"
+		android:background="#ffdddddd"
+		android:cacheColorHint="#00000000"
+		android:divider="@+drawable/divider"
+		android:dividerHeight="2px"
+		android:focusable="true">
+		<requestFocus />
+	</ListView>
+	<View android:id="@+id/footer"
+		android:layout_width="fill_parent" 
+		android:layout_height="8dp"
+		android:background="@+drawable/footer" />
+</LinearLayout>
