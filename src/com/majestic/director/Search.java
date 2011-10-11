@@ -8,9 +8,6 @@
 
 package com.majestic.director;
 
-import java.util.ArrayList;
-import java.util.Stack;
-
 import com.majestic.director.adapter.Entry;
 import com.majestic.director.adapter.EntryArrayAdapter;
 
@@ -37,16 +34,22 @@ public class Search extends Activity {
 	 * Dialogs
 	 */
 	private static final int PROG_DIALOG = 0;
-	private static final int SEARCH_COMPLETE = 0;
+	private static final int SEARCH_UPDATE = 0;
+	
+	/**
+	 * Depth to recursively search for files
+	 */
+	public static final int NESTED_FILE_DEPTH = 2;
 	
 	private ListView searchView;
 	private EditText searchText;
+	private Thread searchThread;
 	
 	private Handler handle = new Handler() {
 		
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
-				case SEARCH_COMPLETE:
+				case SEARCH_UPDATE:
 					EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, Director.search);
 			        searchView.setAdapter(adapter);
 					break;
@@ -56,6 +59,7 @@ public class Search extends Activity {
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Search in " + Director.curr.getPath());
         setContentView(R.layout.search);
         searchView = (ListView) findViewById(R.id.search_file_view);
         searchView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -69,21 +73,26 @@ public class Search extends Activity {
 		searchText.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+					Director.search.clear();
 					Director.searchTerm = searchText.getText().toString();
+					searchText.setText(Director.searchTerm);
+		    		EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, Director.search);
+			        searchView.setAdapter(adapter);
 					showDialog(PROG_DIALOG);
-					new Thread(new Runnable(){
+					searchThread = new Thread(){
 						public void run(){
-							search(searchText.getText().toString());
-							handle.sendEmptyMessage(SEARCH_COMPLETE);
+							search(Director.searchTerm);
+							handle.sendEmptyMessage(SEARCH_UPDATE);
 							dismissDialog(PROG_DIALOG);
 						}
-					}).start();
+					};
+					searchThread.start();
 					return true;
 				}
 				return false;
 			}
 		});
-        EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, Director.search);
+		EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, Director.search);
         searchView.setAdapter(adapter);
 	}
 	
@@ -111,7 +120,7 @@ public class Search extends Activity {
 	    		Director.searchTerm = new String();
 	    		searchText.setText(new String());
 	    		EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, Director.search);
-	            searchView.setAdapter(adapter);
+		        searchView.setAdapter(adapter);
 	    		return true;
 	    	case R.id.back_search:
 	    		finish();
@@ -119,6 +128,12 @@ public class Search extends Activity {
     	}
     	return false;
     }
+	
+	public void onStop() {
+		super.onStop();
+		if(searchThread != null && searchThread.isAlive())
+			searchThread.stop();
+	}
 	
 	/**
 	 * Returns the selected entry in the search
@@ -136,18 +151,22 @@ public class Search extends Activity {
 	 * @param term The search term
 	 */
 	private void search(String term) {
-		Director.search.clear();
-		Stack<Entry> st = new Stack<Entry>();
-		st.push(Director.curr);
-		while(!st.isEmpty()) {
-			Entry entry = st.pop();
-			if(entry.getName().contains(term))
-				Director.search.add(entry);
-			if(entry.isDirectory() && entry.getAccessable() == Director.ACCESS) {
-				ArrayList<Entry> subEntries = entry.getSubFiles();
-				for(Entry e: subEntries)
-					st.push(e);
-			}
-		}
+		searchHelper(term, Director.curr, 0);
+	}
+	
+	/**
+	 * Search helper method
+	 * @param term The search term
+	 * @param entry The current entry to search from
+	 * @param level The current level being searched at
+	 */
+	private void searchHelper(String term, Entry entry, int level) {
+		if(level == NESTED_FILE_DEPTH)
+			return;
+		if(entry.getName().contains(term))
+			Director.search.add(entry);
+		if(entry.isDirectory() && entry.getAccessable() == Director.ACCESS)
+			for(Entry e: entry.getSubFiles())
+				searchHelper(term, e, level + 1);
 	}
 }

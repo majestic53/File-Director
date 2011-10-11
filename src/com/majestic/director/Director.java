@@ -97,6 +97,8 @@ public class Director extends Activity {
 	public static final int DELETE_FAILURE = 1;
 	public static final int PASTE_SUCCESS = 2;
 	public static final int PASTE_FAILURE = 3;
+	public static final int LOAD_SUCCESS = 4;
+	public static final int LOAD_FAILURE = 5;
 	
 	/**
 	 * History parameters
@@ -134,21 +136,30 @@ public class Director extends Activity {
 		
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
-			case DELETE_SUCCESS:
-				updateView(curr);
-				Toast.makeText(Director.this, "File(s) deleted", Toast.LENGTH_SHORT).show();
-				break;
-			case DELETE_FAILURE:
-				showAlertDialog("Failed to delete file(s)", R.drawable.alert);
-				break;
-			case PASTE_SUCCESS:
-				pasteable = false;
-				cutMode = false;
-				Toast.makeText(fileView.getContext(), "File(s) pasted", Toast.LENGTH_SHORT).show();
-				break;
-			case PASTE_FAILURE:
-				showAlertDialog("Failed to paste file(s)", R.drawable.alert);
-				break;
+				case DELETE_SUCCESS:
+					updateView(curr);
+					Toast.makeText(Director.this, "File(s) deleted", Toast.LENGTH_SHORT).show();
+					break;
+				case DELETE_FAILURE:
+					showAlertDialog("Failed to delete file(s)", R.drawable.alert);
+					break;
+				case PASTE_SUCCESS:
+					pasteable = false;
+					cutMode = false;
+					updateView(curr);
+					Toast.makeText(fileView.getContext(), "File(s) pasted", Toast.LENGTH_SHORT).show();
+					break;
+				case PASTE_FAILURE:
+					showAlertDialog("Failed to paste file(s)", R.drawable.alert);
+					break;
+				case LOAD_SUCCESS:
+					EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, entries);
+			        fileView.setAdapter(adapter);
+			        setTitle(curr.getPath());
+					break;
+				case LOAD_FAILURE:
+					showAlertDialog("Failed to load file(s)", R.drawable.alert);
+					break;
 			}
 		}
 	};
@@ -355,7 +366,7 @@ public class Director extends Activity {
     			return true;
     		case PASTE_POS:
     			showDialog(PROG_DIALOG);
-				new Thread(new Runnable(){
+				new Thread(){
 					public void run(){
 						if(pasteEntry(entry))
 							handle.sendEmptyMessage(PASTE_SUCCESS);
@@ -363,7 +374,7 @@ public class Director extends Activity {
 							handle.sendEmptyMessage(PASTE_FAILURE);
 						dismissDialog(Director.PROG_DIALOG);
 					}
-				}).start();
+				}.start();
     			return true;
     		case RENAME_POS:
     			showRenameDialog(entry);
@@ -571,7 +582,7 @@ public class Director extends Activity {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.dismiss();
 				showDialog(PROG_DIALOG);
-				new Thread(new Runnable(){
+				new Thread(){
 					public void run(){
 						if(deleteEntry(entry))
 							handle.sendEmptyMessage(DELETE_SUCCESS);
@@ -579,7 +590,7 @@ public class Director extends Activity {
 							handle.sendEmptyMessage(DELETE_FAILURE);
 						dismissDialog(Director.PROG_DIALOG);
 					}
-				}).start();
+				}.start();
 			}
 		});
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -658,33 +669,33 @@ public class Director extends Activity {
     		Toast.makeText(fileView.getContext(), "Could not access " + dir.getPath(), Toast.LENGTH_SHORT).show();
     		return false;
     	}
-        entries = dir.getSubFiles();
-        if(!dir.equals(root)) {
-	        entries.add(FRONT, dir.getParent());
-	        entries.get(FRONT).setName(PARENT);
-        }
-        if(entries.size() == 0) {
-        	entries = curr.getSubFiles();
-        	Toast.makeText(fileView.getContext(), dir.getPath() + " is empty", Toast.LENGTH_SHORT).show();
-    		return false;
-        }
-        curr = dir;
-        if(curr.equals(root))
-    		atRoot = true;
-    	else
-    		atRoot = false;
-        EntryArrayAdapter adapter = new EntryArrayAdapter(getApplicationContext(), R.layout.entry, entries);
-        fileView.setAdapter(adapter);
-        setTitle(curr.getPath());
-        new Thread() {
+    	//showDialog(PROG_DIALOG);
+    	new Thread() {
 			public void run() {
-				if(!historyContains(curr)) {
+				entries = dir.getSubFiles();
+		        if(!dir.equals(root)) {
+			        entries.add(FRONT, dir.getParent());
+			        entries.get(FRONT).setName(PARENT);
+		        }
+		        if(entries.size() == 0) {
+		        	entries = curr.getSubFiles();
+		        	Toast.makeText(fileView.getContext(), dir.getPath() + " is empty", Toast.LENGTH_SHORT).show();
+		        	handle.sendEmptyMessage(LOAD_FAILURE);
+		        }
+		        curr = dir;
+		        if(curr.equals(root))
+		    		atRoot = true;
+		    	else
+		    		atRoot = false;
+		        if(!historyContains(curr)) {
 					if(history.size() >= MAX_HIST_SIZE)
 						history.remove(0);
 	            	history.add(curr);
 				}
+				handle.sendEmptyMessage(LOAD_SUCCESS);
+				//dismissDialog(Director.PROG_DIALOG);
 			}
-		}.start();
-        return true;
+    	}.start();
+    	return true;
     }
 }

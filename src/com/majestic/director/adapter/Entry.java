@@ -195,7 +195,7 @@ public class Entry implements Comparable<Entry> {
 	}
 	
 	/**
-	 * GetNestedSize helper function
+	 * GetNestedSize helper method
 	 * @param entry The entry to recurse from at that level
 	 * @param level The depth of the current recursion
 	 * @return A folder size
