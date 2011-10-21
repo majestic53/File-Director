@@ -8,6 +8,10 @@
 
 package com.majestic.director;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import com.majestic.director.adapter.Entry;
 import com.majestic.director.adapter.EntryArrayAdapter;
 
@@ -57,7 +61,7 @@ public class Search extends Activity {
 		}
 	};
 	
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Search in " + Director.curr.getPath());
         setContentView(R.layout.search);
@@ -129,7 +133,7 @@ public class Search extends Activity {
     	return false;
     }
 	
-	public void onStop() {
+	protected void onStop() {
 		super.onStop();
 		if(searchThread != null && searchThread.isAlive())
 			searchThread.stop();
@@ -151,22 +155,30 @@ public class Search extends Activity {
 	 * @param term The search term
 	 */
 	private void search(String term) {
-		searchHelper(term, Director.curr, 0);
+		if(term.length() == 0)
+			return;
+		try {
+			Pattern pat = Pattern.compile(term);
+			searchHelper(pat, Director.curr, 0);
+		} catch(PatternSyntaxException e) {
+			return;
+		}
 	}
 	
 	/**
 	 * Search helper method
-	 * @param term The search term
+	 * @param term The search term as a pattern
 	 * @param entry The current entry to search from
 	 * @param level The current level being searched at
 	 */
-	private void searchHelper(String term, Entry entry, int level) {
+	private void searchHelper(Pattern pat, Entry entry, int level) {
 		if(level == NESTED_FILE_DEPTH)
 			return;
-		if(entry.getName().contains(term))
+		Matcher mat = pat.matcher(entry.getName());
+		if(mat.find())
 			Director.search.add(entry);
 		if(entry.isDirectory() && entry.getAccessable() == Director.ACCESS)
 			for(Entry e: entry.getSubFiles())
-				searchHelper(term, e, level + 1);
+				searchHelper(pat, e, level + 1);
 	}
 }

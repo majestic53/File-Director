@@ -2,7 +2,7 @@ File Director by majestic53 (majestic53@gmail.com)
 
 A simple file manager with all the featured required to manipulate and maintain an android file-system.
 
-Version 2.0.1:
+Version 2.0.2:
 
 Features:
 
@@ -18,6 +18,10 @@ Known Bugs:
      Delete/paste operations may fail to complete if orientation change occurs 
 
 Changelog:
+
+Version 2.0.2
+
+     Various bug fixes
 
 Version 2.0.1
 

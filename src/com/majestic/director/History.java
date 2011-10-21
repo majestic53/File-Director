@@ -24,7 +24,7 @@ public class History extends Activity {
 
 	private ListView histView;
 	
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
         histView = (ListView) findViewById(R.id.history_file_view);

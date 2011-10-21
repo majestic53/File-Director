@@ -125,6 +125,7 @@ public class Director extends Activity {
 	public static Entry curr;
 	public static Entry root;
 	public static Entry sdCard;
+	public Thread updateThread;
 	public Entry pasteEntry;
 	public ListView fileView;
 	public static String searchTerm;
@@ -386,7 +387,7 @@ public class Director extends Activity {
     	return false;
     }
 	
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         sortBy = SORT_BY_TYPE;
@@ -468,7 +469,7 @@ public class Director extends Activity {
 	    inflater.inflate(R.menu.menu, menu);
 	    return true;
 	}
-    
+
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
 	    	case R.id.sort:
@@ -670,7 +671,7 @@ public class Director extends Activity {
     		return false;
     	}
     	//showDialog(PROG_DIALOG);
-    	new Thread() {
+    	updateThread = new Thread() {
 			public void run() {
 				entries = dir.getSubFiles();
 		        if(!dir.equals(root)) {
@@ -695,7 +696,8 @@ public class Director extends Activity {
 				handle.sendEmptyMessage(LOAD_SUCCESS);
 				//dismissDialog(Director.PROG_DIALOG);
 			}
-    	}.start();
+    	};
+    	updateThread.start();
     	return true;
     }
 }
